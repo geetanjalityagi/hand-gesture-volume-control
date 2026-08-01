@@ -20,14 +20,29 @@ class handDetector():
 
     def findhands(self, frame, draw = True):
         frameRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        result = self.hand.process(frameRGB)
+        self.result = self.hand.process(frameRGB)
         
-        if result.multi_hand_landmarks:
-            for handLms in result.multi_hand_landmarks:
+        if self.result.multi_hand_landmarks:
+            for handLms in self.result.multi_hand_landmarks:
                 if draw:
                     self.mpDraw.draw_landmarks(frame, handLms, self.mphands.HAND_CONNECTIONS)
 
         return frame
+
+    def findpoints(self, frame):
+        lmlist = []
+        if self.result.multi_hand_landmarks:
+            for handLms in self.result.multi_hand_landmarks:
+                for id, lms in enumerate(handLms.landmark):
+                    h, w, c = frame.shape
+                    cx, cy = int(lms.x * w), int(lms.y * h)
+
+                    cv2.circle(frame, (cx, cy), 5, (255, 0, 0), cv2.FILLED)
+                    lmlist.append([id, cx, cy])
+
+        return lmlist
+
+
 
 
 def main():
@@ -42,6 +57,7 @@ def main():
         ok, frame = cap.read()
 
         frame = detector.findhands(frame)
+        lmlist = detector.findpoints(frame)
 
         ctime = time.time()
         fps = 1 / (ctime - ptime) if ptime != 0 else 0
