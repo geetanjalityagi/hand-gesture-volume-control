@@ -36,7 +36,6 @@ class handDetector():
                     h, w, c = frame.shape
                     cx, cy = int(lms.x * w), int(lms.y * h)
 
-                    cv2.circle(frame, (cx, cy), 5, (255, 0, 0), cv2.FILLED)
                     lmlist.append([id, cx, cy])
 
         return lmlist
