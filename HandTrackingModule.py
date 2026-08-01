@@ -2,33 +2,60 @@ import cv2
 import time
 import mediapipe as mp
 
-mpDraw = mp.solutions.drawing_utils
-mphands = mp.solutions.hands
-hand = mphands.Hands()
 
-cap = cv2.VideoCapture(1)
+class handDetector():
+    def __init__(self, mode=False, num_hands = 2, detection_conf = 0.5, tracking_conf = 0.5):
 
-ptime = 0
-while True:
+        self.mode = mode
+        self.num_hands = num_hands
+        self.detection_conf = detection_conf
+        self.tracking_conf = tracking_conf
 
-    ok, frame = cap.read()
+        self.mpDraw = mp.solutions.drawing_utils
+        self.mphands = mp.solutions.hands
+        self.hand = self.mphands.Hands(static_image_mode=self.mode,
+                                      max_num_hands=self.num_hands,
+                                      min_detection_confidence=self.detection_conf,
+                                      min_tracking_confidence=self.tracking_conf)
 
-    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    result = hand.process(img)
+    def findhands(self, frame, draw = True):
+        frameRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        result = self.hand.process(frameRGB)
+        
+        if result.multi_hand_landmarks:
+            for handLms in result.multi_hand_landmarks:
+                if draw:
+                    self.mpDraw.draw_landmarks(frame, handLms, self.mphands.HAND_CONNECTIONS)
 
-    if result.multi_hand_landmarks:
-        for handLms in result.multi_hand_landmarks:
-            mpDraw.draw_landmarks(frame, handLms, mphands.HAND_CONNECTIONS)
+        return frame
 
-    ctime = time.time()
-    fps = 1 / (ctime - ptime) if ptime != 0 else 0
-    ptime = ctime
 
-    cv2.putText(frame, f"FPS: {fps:.2f}", (40, 70), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 1)
-    cv2.imshow("Frame", frame)
+def main():
+    cap = cv2.VideoCapture(1)
 
-    if cv2.waitKey(1) == ord('q'):
-        break
+    ptime = 0
+    ctime = 0
 
-cap.release()
-cv2.destroyAllWindows()
+    detector = handDetector()
+    while True:
+
+        ok, frame = cap.read()
+
+        frame = detector.findhands(frame)
+
+        ctime = time.time()
+        fps = 1 / (ctime - ptime) if ptime != 0 else 0
+        ptime = ctime
+        
+        cv2.putText(frame, f"FPS: {fps:.2f}", (40, 70), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 1)
+        cv2.imshow("Frame", frame)
+        
+        if cv2.waitKey(1) == ord('q'):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    main()
+
