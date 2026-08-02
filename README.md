@@ -13,7 +13,7 @@ This application uses a standard webcam to detect hand landmarks, calculates the
 - **Interactive Visual HUD (Heads-Up Display):**
   - **Dynamic Volume Bar:** A vertical indicator on the left side of the frame showing the current volume level.
   - **Interactive HUD Colors:**
-    -  <p><strong>Color:</strong> #00FFFF (Cyan)</p>volume levels (1% – 99%).
+    - 💠 **Cyan (Default):** Normal volume levels (1% – 99%).
     - 🟦 **Blue:** Muted/Minimum volume (0%).
     - 🟥 **Red:** Maximum volume (100%).
   - **Fingertip Feedback:** Displays connection lines and landmark circles matching the status color, with a magenta circle highlighting when the fingertips touch (mute).
