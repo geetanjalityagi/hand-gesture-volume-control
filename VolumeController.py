@@ -15,6 +15,8 @@ device = AudioUtilities.GetSpeakers()
 volume = device.EndpointVolume
 minvol =  volume.GetVolumeRange()[0]
 maxvol = volume.GetVolumeRange()[1]
+print(minvol)
+print(maxvol)
 
 while True:
 
@@ -35,12 +37,12 @@ while True:
         length = math.hypot(x2 - x1, y2 - y1)
 
         # Hand Range 30 - 240
-        # Volume Rage -63.5 - 0
+        # Volume Rage -65.25 - 0
 
-        vol = np.interp(length, [30, 240], [minvol, maxvol])
+        vol = np.interp(length, [25, 190], [minvol, maxvol])
         volume.SetMasterVolumeLevel(vol, None)
 
-        if length < 35:
+        if length < 22:
             cv2.circle(frame, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
 
     ctime = time.time()
