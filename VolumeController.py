@@ -20,6 +20,11 @@ while True:
 
     ok, frame = cap.read()
 
+    if not ok:
+        break
+
+    frame = cv2.flip(frame, 1)
+
     frame = detector.findhands(frame)
     lmlist = detector.findpoints(frame)
 
